@@ -1,5 +1,6 @@
 import express, { Express, Response } from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import { connectDB } from './config/database';
 import authRoutes from './routes/auth';
 
@@ -13,6 +14,7 @@ const port = process.env.PORT || 3000;
 connectDB();
 
 // Middleware
+app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 
 // Routes
