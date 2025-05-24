@@ -8,7 +8,7 @@ import authRoutes from './routes/auth';
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3002;
 
 // Connect to MongoDB
 connectDB();

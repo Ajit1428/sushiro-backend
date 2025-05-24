@@ -3,13 +3,8 @@ import { User } from '../models/User';
 
 export const signup = async (req: Request, res: Response) => {
   try {
-    const { firstName, lastName, email, password, confirmPassword, dateOfBirth, gender } = req.body;
+    const { firstName, lastName, email, password, birthDate, gender } = req.body;
 
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      res.status(400).json({ message: 'Passwords do not match' });
-      return
-    }
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -18,13 +13,15 @@ export const signup = async (req: Request, res: Response) => {
       return
     }
 
+    console.log(req.body)
+
     // Create new user
     const user = new User({
       firstName,
       lastName,
       email,
       password,
-      dateOfBirth: new Date(dateOfBirth),
+      dateOfBirth: birthDate,
       gender,
     });
 
@@ -47,9 +44,9 @@ export const signup = async (req: Request, res: Response) => {
 
 export const saveCode = async (req: Request, res: Response) => {
   try {
-    const { email, code } = req.body;
+    const { email, verificationCode } = req.body;
 
-    if (!email || !code) {
+    if (!email || !verificationCode) {
       res.status(400).json({ message: 'Email and verification code are required' });
       return
     }
@@ -62,7 +59,7 @@ export const saveCode = async (req: Request, res: Response) => {
     }
 
     // Save the verification code
-    user.verificationCode = code;
+    user.verificationCode = verificationCode;
     user.verificationCodeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
     await user.save();
 
