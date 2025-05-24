@@ -63,10 +63,10 @@ const userSchema = new mongoose_1.Schema({
     password: {
         type: String,
         required: [true, 'Password is required'],
-        minlength: [8, 'Password must be at least 8 characters long'],
+        minlength: [4, 'Password must be at least 8 characters long'],
     },
     dateOfBirth: {
-        type: Date,
+        type: String,
         required: [true, 'Date of birth is required'],
     },
     gender: {

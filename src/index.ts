@@ -1,4 +1,4 @@
-import express, { Express, Response } from 'express';
+import express, { Express, Response, Request } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { connectDB } from './config/database';
@@ -58,7 +58,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 
-app.get('/', (res: Response) => {
+app.get('/', (_: Request, res: Response) => {
   res.json({ message: 'Welcome to Facebook Clone API' });
 });
 

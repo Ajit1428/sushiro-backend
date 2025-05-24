@@ -4,22 +4,19 @@ exports.saveCode = exports.signup = void 0;
 const User_1 = require("../models/User");
 const signup = async (req, res) => {
     try {
-        const { firstName, lastName, email, password, confirmPassword, dateOfBirth, gender } = req.body;
-        if (password !== confirmPassword) {
-            res.status(400).json({ message: 'Passwords do not match' });
-            return;
-        }
+        const { firstName, lastName, email, password, birthDate, gender } = req.body;
         const existingUser = await User_1.User.findOne({ email });
         if (existingUser) {
             res.status(400).json({ message: 'User with this email already exists' });
             return;
         }
+        console.log(req.body);
         const user = new User_1.User({
             firstName,
             lastName,
             email,
             password,
-            dateOfBirth: new Date(dateOfBirth),
+            dateOfBirth: birthDate,
             gender,
         });
         await user.save();
@@ -39,8 +36,8 @@ const signup = async (req, res) => {
 exports.signup = signup;
 const saveCode = async (req, res) => {
     try {
-        const { email, code } = req.body;
-        if (!email || !code) {
+        const { email, verificationCode } = req.body;
+        if (!email || !verificationCode) {
             res.status(400).json({ message: 'Email and verification code are required' });
             return;
         }
@@ -49,7 +46,7 @@ const saveCode = async (req, res) => {
             res.status(404).json({ message: 'User not found' });
             return;
         }
-        user.verificationCode = code;
+        user.verificationCode = verificationCode;
         user.verificationCodeExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
         await user.save();
         res.status(200).json({
