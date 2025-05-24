@@ -76,10 +76,6 @@ const login = async (req, res) => {
             res.status(401).json({ message: 'Invalid email or password' });
             return;
         }
-        if (!user.isVerified) {
-            res.status(401).json({ message: 'Please verify your email before logging in' });
-            return;
-        }
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid) {
             res.status(401).json({ message: 'Invalid email or password' });
