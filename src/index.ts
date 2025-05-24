@@ -17,6 +17,7 @@ connectDB();
 const allowedOrigins = [
   'http://localhost:3000',
   'https://sushiro-six.vercel.app',
+  'https://sushiro-backend.onrender.com'
 ].filter(Boolean); // Remove any undefined values
 
 const corsOptions = {
