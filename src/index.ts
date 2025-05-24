@@ -1,15 +1,24 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express, Response } from 'express';
+import dotenv from 'dotenv';
+import { connectDB } from './config/database';
 import authRoutes from './routes/auth';
+
+// Load environment variables
+dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
+// Connect to MongoDB
+connectDB();
+
+// Middleware
 app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (res: Response) => {
   res.json({ message: 'Welcome to Facebook Clone API' });
 });
 
