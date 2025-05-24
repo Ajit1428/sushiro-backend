@@ -14,12 +14,40 @@ const port = process.env.PORT || 3000;
 connectDB();
 
 // CORS configuration
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://sushiro-six.vercel.app',
+].filter(Boolean); // Remove any undefined values
+
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://sushiro-six.vercel.app/'], // Replace with your frontend URL
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps, curl, postman)
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-  credentials: true, // Allow cookies and authentication headers
-  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Access-Control-Request-Method',
+    'Access-Control-Request-Headers'
+  ],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  credentials: true,
+  maxAge: 86400, // 24 hours
+  optionsSuccessStatus: 200
 };
 
 // Middleware
