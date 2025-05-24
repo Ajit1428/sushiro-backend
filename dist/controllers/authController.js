@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = exports.saveCode = exports.signup = void 0;
+exports.updateCode = exports.login = exports.verifyCode = exports.saveCode = exports.signup = void 0;
 const User_1 = require("../models/User");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const signup = async (req, res) => {
@@ -64,6 +64,37 @@ const saveCode = async (req, res) => {
     }
 };
 exports.saveCode = saveCode;
+const verifyCode = async (req, res) => {
+    try {
+        const { email, verificationCode } = req.body;
+        if (!email || !verificationCode) {
+            res.status(400).json({ message: 'Email and verification code are required' });
+            return;
+        }
+        const user = await User_1.User.findOne({ email });
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        if (user.verificationCode !== verificationCode) {
+            res.status(400).json({ message: 'Invalid verification code' });
+            return;
+        }
+        user.isVerified = true;
+        await user.save();
+        res.status(200).json({
+            message: 'Code verified successfully',
+            isVerified: true
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'Error verifying code',
+            error: error.message
+        });
+    }
+};
+exports.verifyCode = verifyCode;
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -97,4 +128,31 @@ const login = async (req, res) => {
     }
 };
 exports.login = login;
+const updateCode = async (req, res) => {
+    try {
+        const { email, newVerificationCode } = req.body;
+        if (!email && !newVerificationCode) {
+            res.status(400).json({ message: 'Email and verification code is required' });
+            return;
+        }
+        const user = await User_1.User.findOne({ email });
+        if (!user) {
+            res.status(404).json({ message: 'User not found' });
+            return;
+        }
+        user.verificationCode = newVerificationCode;
+        await user.save();
+        res.status(200).json({
+            message: 'New verification code generated successfully',
+            verificationCode: newVerificationCode
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: 'Error updating verification code',
+            error: error.message
+        });
+    }
+};
+exports.updateCode = updateCode;
 //# sourceMappingURL=authController.js.map
